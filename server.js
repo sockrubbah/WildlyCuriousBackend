@@ -1,5 +1,8 @@
 const express = require("express");
 const cors = require("cors");
+const multer = require("multer");
+const axios = require("axios");
+const joi = require("joi");
 const app = express();
 
 app.use(express.static("public"));
@@ -70,8 +73,39 @@ const forum = [
     }
 ]
 
+const posts = [
+    { author: "FernFury", image: "./images/1000064641.jpg"},
+    { author: "CactusWhisperer", image: "./images/Screenshot_20230425.jpg",},
+    { author: "MossyMountain", image: "./images/Screenshot_202304252.jpg",} ,
+    { author: "TigerTrail", image: "./images/Screenshot_202304253.jpg"},
+    { author: "RockyRover", image: "./images/Screenshot_202304254.jpg"},
+    { author: "WillowWanderer", image: "./images/Screenshot_20230707.jpg"},
+    { author: "CheetahChase", image: "./images/Screenshot_20230826.jpg"},
+    { author: "LimestoneLover", image: "./images/20240304_101406.jpg"},
+    { author: "PineConePioneer", image: "./images/Screenshot_20230504.jpg"},
+  ];
+
+  const examplePost = {
+    author: "FernFury",
+    image: "./images/1000064641.jpg",
+    description: "Found a very rare spider lily on my walk??",
+    comments: [
+      { user: "LeafLover", text: "This is stunning, FernFury! 🍃" },
+      { user: "MossMaster", text: "Love the natural tones. 🌿" },
+      { user: "RootRunner", text: "FernFury never disappoints! 🌱🔥" }
+    ]
+  };
+
+res.send(examplePost);
+res.send(posts);
 res.send(forum);
 });
+
+const validatePost = (post) => {
+    const schema = Joi.object({
+
+    });
+};
 
 app.listen(3001, ()=>{
     console.log("I'm listening")
