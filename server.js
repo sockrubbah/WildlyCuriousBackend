@@ -97,18 +97,8 @@ const posts = [
   };
 
 
-  res.json({
-    examplePost,
-    posts,
-    forum
-  });
+res.send(forum);
 });
-
-const validatePost = (post) => {
-    const schema = Joi.object({
-
-    });
-};
 
 app.listen(3001, ()=>{
     console.log("I'm listening")
