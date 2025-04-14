@@ -96,9 +96,12 @@ const posts = [
     ]
   };
 
-res.send(examplePost);
-res.send(posts);
-res.send(forum);
+
+  res.json({
+    examplePost,
+    posts,
+    forum
+  });
 });
 
 const validatePost = (post) => {
