@@ -9,11 +9,7 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
 
-app.get("/",(req,res)=>{
-    res.sendFile(__dirname + "index.html");
-})
 
-app.get("/api/forum", (req,res) => {
 const forum = [
     {
         "_id": 1,
@@ -97,9 +93,26 @@ const posts = [
   };
 
 
-res.send(forum);
-});
-
-app.listen(3001, ()=>{
-    console.log("I'm listening")
-});
+  app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/index.html");
+  });
+  
+  app.get("/api/forum", (req, res) => {
+    res.json(forum);
+  });
+  
+  app.delete("/api/forum/:id", (req, res) => {
+    const postId = parseInt(req.params.id);
+    const index = forum.findIndex(post => post._id === postId);
+  
+    if (index !== -1) {
+      forum.splice(index, 1); // remove from list
+      return res.status(204).send();
+    } else {
+      return res.status(404).send("Post not found");
+    }
+  });
+  
+  app.listen(3001, () => {
+    console.log("I'm listening on port 3001");
+  });
