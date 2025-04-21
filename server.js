@@ -101,6 +101,10 @@ const posts = [
     res.json(forum);
   });
   
+  app.get("/api/posts", (req, res) => {
+    res.json(posts);
+  });
+  
   app.delete("/api/forum/:id", (req, res) => {
     const postId = parseInt(req.params.id);
     const index = forum.findIndex(post => post._id === postId);
@@ -108,6 +112,20 @@ const posts = [
     if (index !== -1) {
       forum.splice(index, 1); // remove from list
       return res.status(204).send();
+    } else {
+      return res.status(404).send("Post not found");
+    }
+  });
+
+  app.put("/api/forum/:id", (req, res) => {
+    const postId = parseInt(req.params.id);
+    const index = forum.findIndex(post => post._id === postId);
+  
+    if (index !== -1) {
+      const { title, content } = req.body;
+      forum[index].title = title;
+      forum[index].content = content;
+      return res.json(forum[index]);
     } else {
       return res.status(404).send("Post not found");
     }
