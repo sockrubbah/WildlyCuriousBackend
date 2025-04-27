@@ -5,10 +5,23 @@ const mongoose = require("mongoose");
 const axios = require("axios");
 const joi = require("joi");
 const app = express();
+const path = require("path");
 
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/images/");
+  },
+  filename: function (req, file, cb) {
+    const originalName = path.parse(file.originalname).name;
+    cb(null, originalName + "-" + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
 
 const forum = [
   {
@@ -92,6 +105,29 @@ const examplePost = {
   ]
 };
 
+app.post("/api/forum", upload.single("image"), async (req, res) => {
+  try {
+    const { title, author, content } = req.body;
+    let img_name = "";
+
+    if (req.file) {
+      img_name = "images/" + req.file.filename;
+    }
+
+    const newPost = new ForumPost({
+      title,
+      author,
+      content,
+      img_name
+    });
+
+    const savedPost = await newPost.save();
+    res.status(201).json(savedPost);
+  } catch (error) {
+    console.error("Error creating post:", error);
+    res.status(500).json({ error: "Failed to create post" });
+  }
+});
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
