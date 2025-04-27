@@ -82,6 +82,21 @@ const forum = [
   }
 ]
 
+async function insertForumPosts() {
+  try {
+    const count = await ForumPost.countDocuments();
+    
+    if (count === 0) {
+      await ForumPost.insertMany(forum);
+      console.log("Inserted hardcoded forum posts into MongoDB.");
+    } else {
+      console.log("Forum posts already exist in the database.");
+    }
+  } catch (error) {
+    console.error("Error inserting forum posts into MongoDB:", error);
+  }
+}
+
 const posts = [
   { author: "FernFury", image: "./images/1000064641.jpg" },
   { author: "CactusWhisperer", image: "./images/Screenshot_20230425.jpg", },
@@ -173,10 +188,12 @@ app.put("/api/forum/:id", (req, res) => {
   }
 });
 
-// Connect to MongoDB
 mongoose
   .connect("mongodb+srv://sbangura:wildpassword@wildcluster.ucatlb6.mongodb.net/?retryWrites=true&w=majority&appName=WildCluster")
-  .then(() => console.log("Connected to mongodb..."))
+  .then(() => {
+    console.log("Connected to mongodb...");
+    insertForumPosts();
+  })
   .catch((err) => console.error("Could not connect to mongodb...", err));
 
 // Define your ForumPost schema
