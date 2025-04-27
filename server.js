@@ -133,8 +133,14 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-app.get("/api/forum", (req, res) => {
-  res.json(forum);
+app.get("/api/forum", async (req, res) => {
+  try {
+    const forumPosts = await ForumPost.find(); // mongo
+    res.json(forumPosts);
+  } catch (error) {
+    console.error("Error fetching forum posts:", error);
+    res.status(500).json({ error: "Failed to fetch forum posts" });
+  }
 });
 
 app.get("/api/posts", (req, res) => {
