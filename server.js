@@ -121,6 +121,11 @@ const examplePost = {
 };
 
 app.post("/api/forum", upload.single("image"), async (req, res) => {
+  const { error } = forumPostValidationSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   try {
     const { title, author, content } = req.body;
     let img_name = "";
@@ -178,17 +183,31 @@ app.delete("/api/forum/:id", async (req, res) => {
   }
 });
 
-app.put("/api/forum/:id", (req, res) => {
-  const postId = parseInt(req.params.id);
-  const index = forum.findIndex(post => post._id === postId);
+app.put("/api/forum/:id", async (req, res) => {
+  const { error } = forumPostValidationSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
 
-  if (index !== -1) {
-    const { title, content } = req.body;
-    forum[index].title = title;
-    forum[index].content = content;
-    return res.json(forum[index]);
-  } else {
-    return res.status(404).send("Post not found");
+  try {
+    const postId = req.params.id;
+    const updatedPost = await ForumPost.findByIdAndUpdate(
+      postId,
+      {
+        title: req.body.title,
+        content: req.body.content
+      },
+      { new: true }
+    );
+
+    if (updatedPost) {
+      res.json(updatedPost);
+    } else {
+      res.status(404).send("Post not found");
+    }
+  } catch (error) {
+    console.error("Error updating post:", error);
+    res.status(500).json({ error: "Failed to update post" });
   }
 });
 
@@ -214,12 +233,18 @@ async function createForumPost() {
     title: "My First Forum Post",
     author: "Jane Doe",
     content: "This is an awesome post about plants!",
-    img_name: "images/plant1.jpg"
+    img_name: "images/1000064641.jpg"
   });
 
   const result = await forumPost.save();
   console.log(result);
 }
+
+const forumPostValidationSchema = joi.object({
+  title: joi.string().min(3).required(),
+  author: joi.string().min(3).required(),
+  content: joi.string().min(10).required(),
+});
 
 createForumPost();
 
