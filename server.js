@@ -7,7 +7,7 @@ const joi = require("joi");
 const app = express();
 const path = require("path");
 
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(cors());
 
@@ -98,20 +98,20 @@ async function insertForumPosts() {
 }
 
 const posts = [
-  { author: "FernFury", image: "./images/1000064641.jpg" },
-  { author: "CactusWhisperer", image: "./images/Screenshot_20230425.jpg", },
-  { author: "MossyMountain", image: "./images/Screenshot_202304252.jpg", },
-  { author: "TigerTrail", image: "./images/Screenshot_202304253.jpg" },
-  { author: "RockyRover", image: "./images/Screenshot_202304254.jpg" },
-  { author: "WillowWanderer", image: "./images/Screenshot_20230707.jpg" },
-  { author: "CheetahChase", image: "./images/Screenshot_20230826.jpg" },
-  { author: "LimestoneLover", image: "./images/20240304_101406.jpg" },
-  { author: "PineConePioneer", image: "./images/Screenshot_20230504.jpg" },
+  { author: "FernFury", image: "images/1000064641.jpg" },
+  { author: "CactusWhisperer", image: "images/Screenshot_20230425.jpg", },
+  { author: "MossyMountain", image: "images/Screenshot_202304252.jpg", },
+  { author: "TigerTrail", image: "images/Screenshot_202304253.jpg" },
+  { author: "RockyRover", image: "images/Screenshot_202304254.jpg" },
+  { author: "WillowWanderer", image: "images/Screenshot_20230707.jpg" },
+  { author: "CheetahChase", image: "images/Screenshot_20230826.jpg" },
+  { author: "LimestoneLover", image: "images/20240304_101406.jpg" },
+  { author: "PineConePioneer", image: "images/Screenshot_20230504.jpg" },
 ];
 
 const examplePost = {
   author: "FernFury",
-  image: "./images/1000064641.jpg",
+  image: "images/1000064641.jpg",
   description: "Found a very rare spider lily on my walk??",
   comments: [
     { user: "LeafLover", text: "This is stunning, FernFury! 🍃" },
@@ -233,7 +233,7 @@ async function createForumPost() {
     title: "My First Forum Post",
     author: "Jane Doe",
     content: "This is an awesome post about plants!",
-    img_name: "images/1000064641.jpg"
+    img_name: "/images/1000064641.jpg"
   });
 
   const result = await forumPost.save();
