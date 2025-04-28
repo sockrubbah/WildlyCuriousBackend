@@ -162,15 +162,19 @@ app.get("/api/posts", (req, res) => {
   res.json(posts);
 });
 
-app.delete("/api/forum/:id", (req, res) => {
-  const postId = parseInt(req.params.id);
-  const index = forum.findIndex(post => post._id === postId);
+app.delete("/api/forum/:id", async (req, res) => {
+  const postId = req.params.id;
+  try {
+    const deletedPost = await ForumPost.findByIdAndDelete(postId);
 
-  if (index !== -1) {
-    forum.splice(index, 1); // remove from list
-    return res.status(204).send();
-  } else {
-    return res.status(404).send("Post not found");
+    if (deletedPost) {
+      res.status(204).send();
+    } else {
+      res.status(404).send("Post not found");
+    }
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    res.status(500).json({ error: "Failed to delete post" });
   }
 });
 
@@ -196,7 +200,6 @@ mongoose
   })
   .catch((err) => console.error("Could not connect to mongodb...", err));
 
-// Define your ForumPost schema
 const forumPostSchema = new mongoose.Schema({
   title: String,
   author: String,
@@ -204,10 +207,8 @@ const forumPostSchema = new mongoose.Schema({
   img_name: String
 });
 
-// Create the ForumPost model (class)
 const ForumPost = mongoose.model("ForumPost", forumPostSchema);
 
-// Example: Create a new forum post
 async function createForumPost() {
   const forumPost = new ForumPost({
     title: "My First Forum Post",
