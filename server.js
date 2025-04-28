@@ -84,9 +84,14 @@ const forum = [
 
 async function insertForumPosts() {
   try {
-    await ForumPost.deleteMany({});
-    await ForumPost.insertMany(forum);
-    console.log("Inserted hardcoded forum posts into MongoDB.");
+    const count = await ForumPost.countDocuments();
+
+    if (count === 0) {
+      await ForumPost.insertMany(forum);
+      console.log("Inserted hardcoded forum posts into MongoDB.");
+    } else {
+      console.log("Forum posts already exist in the database.");
+    }
   } catch (error) {
     console.error("Error inserting forum posts into MongoDB:", error);
   }
